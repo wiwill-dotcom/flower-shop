@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Checkout from '@/components/Checkout';
 import { ArrowDown, ArrowLeft, ArrowUpRight, Check, Flower2, Home, LayoutGrid, Minus, Plus, ShoppingBag, Trash2, X } from 'lucide-react';
 
 type Bouquet = { id: number; name: string; composition: string; price: number; category: string[]; image: string; tag?: string };
@@ -18,7 +19,7 @@ const categories = ['Все', 'Розы', 'Авторские', 'Нежные', 
 const money = (value: number) => new Intl.NumberFormat('ru-RU').format(value) + ' ₽';
 
 export default function Store() {
-  const [view, setView] = useState<'home' | 'catalog' | 'cart'>('home');
+  const [view, setView] = useState<'home' | 'catalog' | 'cart' | 'checkout'>('home');
   const [category, setCategory] = useState('Все');
   const [cart, setCart] = useState<Record<number, number>>({});
   const [selected, setSelected] = useState<Bouquet | null>(null);
@@ -49,7 +50,7 @@ export default function Store() {
         <img src="/images/bouquet-1.jpg" alt="Нежный розовый букет" className="hero-image" /><span className="hero-note">собрано с любовью ♡</span>
       </section>}
 
-      {view !== 'cart' ? <section className="catalog" aria-label="Каталог букетов">
+      {view === 'checkout' ? <Checkout items={bouquets.filter(item => cart[item.id]).map(item => ({ ...item, quantity: cart[item.id] }))} onBack={() => navigate('cart')} onReturn={() => navigate('home')} /> : view !== 'cart' ? <section className="catalog" aria-label="Каталог букетов">
         <div className="section-title flex items-end justify-between"><div><span className="eyebrow">ЦВЕТЫ ГОВОРЯТ ЗА ВАС</span><h2>{view === 'home' ? 'Ваш маленький жест' : 'Каталог букетов'}</h2></div><span className="catalog-count">{visible.length} букетов <ArrowDown size={14} /></span></div>
         <div className="categories flex gap-2" aria-label="Категории">{categories.map(c => <button key={c} aria-pressed={category === c} className={category === c ? 'category active' : 'category'} onClick={() => setCategory(c)}>{c}</button>)}</div>
         <div className="product-grid grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">{visible.map(item => <article className="product" key={item.id}>
@@ -59,7 +60,7 @@ export default function Store() {
         <p className="catalog-footnote"><Flower2 size={17} /> Каждый букет немного особенный. Как и тот, кому он предназначен.</p>
       </section> : <section className="cart-page">
         <button className="back-link" onClick={() => navigate('catalog')}><ArrowLeft size={16} /> К букетам</button><div className="section-title"><span className="eyebrow">ВАШ ВЫБОР</span><h1>Корзина <span className="muted">({count})</span></h1></div>
-        {count === 0 ? <div className="empty-cart"><span className="empty-icon"><ShoppingBag size={36} strokeWidth={1.2} /></span><h2>Здесь расцветёт ваш выбор</h2><p>Добавьте букет, который скажет всё за вас.</p><button className="primary-button" onClick={() => navigate('catalog')}>Выбрать букет <ArrowUpRight size={18} /></button></div> : <div className="cart-layout"><div className="cart-items">{bouquets.filter(b => cart[b.id]).map(item => <article className="cart-item" key={item.id}><button onClick={() => setSelected(item)} aria-label={`Открыть ${item.name}`}><img src={item.image} alt={item.name} /></button><div className="cart-item-info"><h3>{item.name}</h3><p>{item.composition}</p><strong>{money(item.price * cart[item.id])}</strong><div className="quantity"><button aria-label={`Уменьшить количество: ${item.name}`} onClick={() => change(item.id, -1)}><Minus size={16} /></button><span>{cart[item.id]}</span><button aria-label={`Увеличить количество: ${item.name}`} onClick={() => change(item.id, 1)}><Plus size={16} /></button></div></div><button className="remove-button" aria-label={`Удалить ${item.name}`} onClick={() => setCart(c => { const next = { ...c }; delete next[item.id]; return next; })}><Trash2 size={18} /></button></article>)}</div><aside className="cart-summary"><h2>Ваш заказ</h2><div className="summary-line"><span>Букеты · {count} шт.</span><span>{money(total)}</span></div><div className="summary-total"><span>Итого</span><strong>{money(total)}</strong></div><button className="primary-button" onClick={() => setNotice('Это демоверсия. Оформление заказа пока недоступно.')}>Оформить заказ <ArrowUpRight size={18} /></button><p>Пока это демоверсия — заказ не отправляется.</p></aside></div>}
+        {count === 0 ? <div className="empty-cart"><span className="empty-icon"><ShoppingBag size={36} strokeWidth={1.2} /></span><h2>Здесь расцветёт ваш выбор</h2><p>Добавьте букет, который скажет всё за вас.</p><button className="primary-button" onClick={() => navigate('catalog')}>Выбрать букет <ArrowUpRight size={18} /></button></div> : <div className="cart-layout"><div className="cart-items">{bouquets.filter(b => cart[b.id]).map(item => <article className="cart-item" key={item.id}><button onClick={() => setSelected(item)} aria-label={`Открыть ${item.name}`}><img src={item.image} alt={item.name} /></button><div className="cart-item-info"><h3>{item.name}</h3><p>{item.composition}</p><strong>{money(item.price * cart[item.id])}</strong><div className="quantity"><button aria-label={`Уменьшить количество: ${item.name}`} onClick={() => change(item.id, -1)}><Minus size={16} /></button><span>{cart[item.id]}</span><button aria-label={`Увеличить количество: ${item.name}`} onClick={() => change(item.id, 1)}><Plus size={16} /></button></div></div><button className="remove-button" aria-label={`Удалить ${item.name}`} onClick={() => setCart(c => { const next = { ...c }; delete next[item.id]; return next; })}><Trash2 size={18} /></button></article>)}</div><aside className="cart-summary"><h2>Ваш заказ</h2><div className="summary-line"><span>Букеты · {count} шт.</span><span>{money(total)}</span></div><div className="summary-total"><span>Итого</span><strong>{money(total)}</strong></div><button className="primary-button" onClick={() => navigate('checkout')}>Оформить заказ <ArrowUpRight size={18} /></button><p>Пока это демоверсия — заказ не отправляется.</p></aside></div>}
       </section>}
     </main>
 
