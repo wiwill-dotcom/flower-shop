@@ -1,0 +1,45 @@
+/* Telegram colors are limited to navigation; keep the catalogue palette. */
+html[data-telegram='true'] .bottom-nav {
+  background: var(--lepestok-tg-backgroundColor);
+  color: var(--lepestok-tg-textColor);
+}
+html[data-telegram='true'] .nav-item { color: var(--lepestok-tg-hintColor); }
+html[data-telegram='true'] .nav-item.selected { color: var(--lepestok-tg-textColor); }
+html[data-telegram='true'] .nav-item.selected:after,
+html[data-telegram='true'] .bottom-nav .badge {
+  background: var(--lepestok-tg-buttonColor);
+  color: var(--lepestok-tg-buttonTextColor);
+}
+:root {
+  --app-safe-top: calc(max(env(safe-area-inset-top, 0px), var(--lepestok-safe-top, 0px)) + var(--lepestok-content-safe-top, 0px));
+  --app-safe-bottom: calc(max(env(safe-area-inset-bottom, 0px), var(--lepestok-safe-bottom, 0px)) + var(--lepestok-content-safe-bottom, 0px));
+  --app-safe-left: calc(max(env(safe-area-inset-left, 0px), var(--lepestok-safe-left, 0px)) + var(--lepestok-content-safe-left, 0px));
+  --app-safe-right: calc(max(env(safe-area-inset-right, 0px), var(--lepestok-safe-right, 0px)) + var(--lepestok-content-safe-right, 0px));
+}
+.store-shell {
+  padding-top: var(--app-safe-top);
+  padding-bottom: calc(105px + var(--app-safe-bottom));
+  padding-left: calc(36px + var(--app-safe-left));
+  padding-right: calc(36px + var(--app-safe-right));
+}
+.bottom-nav { bottom: calc(16px + var(--app-safe-bottom)); }
+.toast { bottom: calc(109px + var(--app-safe-bottom)); }
+.detail-dialog {
+  max-height: min(90dvh, calc(100dvh - var(--app-safe-top) - var(--app-safe-bottom) - 24px));
+  top: var(--app-safe-top);
+  bottom: var(--app-safe-bottom);
+}
+@media(max-width:700px) {
+  .store-shell {
+    padding-bottom: calc(92px + var(--app-safe-bottom));
+    padding-left: calc(18px + var(--app-safe-left));
+    padding-right: calc(18px + var(--app-safe-right));
+  }
+  .bottom-nav {
+    bottom: 0;
+    padding-bottom: calc(10px + var(--app-safe-bottom));
+    padding-left: calc(26px + var(--app-safe-left));
+    padding-right: calc(26px + var(--app-safe-right));
+  }
+  .toast { bottom: calc(95px + var(--app-safe-bottom)); }
+}
